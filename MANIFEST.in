@@ -1,0 +1,10 @@
+include COPYING
+include CREDITS
+include MANIFEST 
+include MANIFEST.in 
+include README.txt
+include README.html
+include setup.py
+include xmltv.py
+global-exclude CVS
+global-exclude .svn
