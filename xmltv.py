@@ -32,6 +32,7 @@ else:
     except ImportError:
         from elementtree.ElementTree import ElementTree, Element, SubElement, tostring
 
+
 # The Python-XMLTV version
 VERSION = "1.2"
 
