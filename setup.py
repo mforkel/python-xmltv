@@ -1,18 +1,23 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
-long_description = """python-xmltv is a Python module for reading XMLTV files.
-
-More information on XMLTV can be found at http://membled.com/work/apps/xmltv/
-"""
-
-setup(name             = "python-xmltv",
-      version	       = "1.3",
-      description      = "A Python module for reading XMLTV files",
-      long_description = long_description,
-      author           = "James Oakley",
-      author_email     = "jfunk@funktronics.ca",
-      url              = "http://www.funktronics.ca/python-xmltv",
-      license	       = "LGPL",
-      py_modules       = ['xmltv'],
-     )
+setup(
+    name="python-xmltv",
+    description="A Python Module for Reading and Writing XMLTV Files",
+    version="1.3",
+    author="James Oakley",
+    email="jfunk@funktronics.ca",
+    url= "http://bitbucket.org/jfunk/python-xmltv",
+    py_modules=['xmltv'],
+    long_description=open('README.txt').read() + '\n\n' +
+                     open('CHANGELOG.txt').read(),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+    ],
+    license="LGPL-3.0+",
+)
