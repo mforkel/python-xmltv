@@ -28,9 +28,8 @@ else:
     except ImportError:
         from elementtree.ElementTree import ElementTree, Element, SubElement, tostring
 
-
 # The Python-XMLTV version
-VERSION = "1.2"
+VERSION = "1.4"
 
 # The date format used in XMLTV (the %Z will go away in 0.6)
 date_format = '%Y%m%d%H%M%S %Z'
@@ -152,8 +151,10 @@ def elem_to_programme(elem):
     crednode = elem.find('credits')
     if crednode is not None:
         creddict = {}
+        # TODO: actor can have a 'role' attribute
         for credtype in ('director', 'actor', 'writer', 'adapter', 'producer',
-                         'presenter', 'commentator', 'guest'):
+                         'presenter', 'commentator', 'guest', 'composer',
+                         'editor'):
             append_text(creddict, credtype, crednode, with_lang=False)
         d['credits'] = creddict
 
@@ -227,12 +228,22 @@ def elem_to_programme(elem):
         append_icons(ratd, ratnode)
         d['rating'].append(ratd)
 
-    srnode = elem.find('star-rating')
-    if srnode is not None:
+    for srnode in elem.findall('star-rating'):
+        if not d.has_key('star-rating'):
+            d['star-rating'] = []
         srd = {}
+        set_attrs(srd, srnode, ('system',))
         set_text(srd, 'value', srnode, with_lang=False)
         append_icons(srd, srnode)
-        d['star-rating'] = srd
+        d['star-rating'].append(srd)
+
+    for revnode in elem.findall('review'):
+        if not d.has_key('review'):
+            d['review'] = []
+        rd = {}
+        set_attrs(rd, revnode, ('type', 'source', 'reviewer',))
+        set_text(rd, 'value', revnode, with_lang=False)
+        d['review'].append(rd)
 
     return d
 
@@ -521,11 +532,24 @@ class Writer:
 
         # Star rating
         if programme.has_key('star-rating'):
-            sr = SubElement(p, 'star-rating')
-            v = SubElement(sr, 'value')
-            self.settext(v, programme['star-rating']['value'], with_lang=False)
-            if programme['star-rating'].has_key('icon'):
-                self.seticons(sr, programme['star-rating']['icon'])
+            for star_rating in programme['star-rating']:
+                sr = SubElement(p, 'star-rating')
+                if star_rating.has_key('system'):
+                    self.setattr(sr, 'system', star_rating['system'])
+                v = SubElement(sr, 'value')
+                self.settext(v, star_rating['value'], with_lang=False)
+                if star_rating.has_key('icon'):
+                    self.seticons(sr, rating['icon'])
+
+        # Review
+        if programme.has_key('review'):
+            for review in programme['review']:
+                r = SubElement(p, 'review')
+                for attr in ('type', 'source', 'reviewer'):
+                    if review.has_key(attr):
+                        self.setattr(r, attr, review[attr])
+                v = SubElement(r, 'value')
+                self.settext(v, review['value'], with_lang=False)
 
     def addChannel(self, channel):
         """
@@ -567,7 +591,7 @@ if __name__ == '__main__':
     from pprint import pprint
     from StringIO import StringIO
     import sys
-    
+
     # An example file
     xmldata = StringIO("""<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE tv SYSTEM "xmltv.dtd">
@@ -602,6 +626,7 @@ if __name__ == '__main__':
     <credits>
       <actor>Jerry Seinfeld</actor>
       <producer>Larry David</producer>
+      <composer>Jonathan Wolff</composer>
     </credits>
     <date>1995</date>
     <length units="minutes">22</length>
@@ -628,6 +653,9 @@ if __name__ == '__main__':
       <value>4/5</value>
       <icon src="http://some.star/icon.png" width="32" height="32"/>
     </star-rating>
+    <review type="url">
+      <value>http://some.review/</value>
+    </review>
     <url>http://www.nbc.com</url>
   </programme>
 </tv>
@@ -639,54 +667,55 @@ if __name__ == '__main__':
     pprint(read_programmes(xmldata))
 
     # Test the writer
-    programmes = [{'audio': {'stereo': 'stereo'},
-                   'category': [('Biz', ''), ('Fin', '')],
-                   'channel': 'C23robtv.zap2it.com',
-                   'date': '2003',
-                   'start': '20030702000000 ADT',
-                   'stop': '20030702003000 ADT',
-                   'title': [('This Week in Business', '')]},
-                  {'audio': {'stereo': 'stereo'},
-                   'category': [('Comedy', '')],
-                   'channel': 'C36wuhf.zap2it.com',
-                   'country': [('USA', '')],
-                   'credits': {'producer': ['Larry David'], 'actor': ['Jerry Seinfeld']},
-                   'date': '1995',
-                   'desc': [('In an effort to grow up, George proposes marriage to former girlfriend Susan.',
-                             '')],
-                   'episode-num': ('7 . 1 . 1/1', 'xmltv_ns'),
-                   'language': ('English', ''),
-                   'last-chance': ('Hah!', ''),
-                   'length': {'units': 'minutes', 'length': '22'},
+    programmes = [{'audio': {'stereo': u'stereo'},
+                   'category': [(u'Biz', u''), (u'Fin', u'')],
+                   'channel': u'C23robtv.zap2it.com',
+                   'date': u'2003',
+                   'start': u'20030702000000 ADT',
+                   'stop': u'20030702003000 ADT',
+                   'title': [(u'This Week in Business', u'')]},
+                  {'audio': {'stereo': u'stereo'},
+                   'category': [(u'Comedy', u'')],
+                   'channel': u'C36wuhf.zap2it.com',
+                   'country': [(u'USA', u'')],
+                   'credits': {'producer': [u'Larry David'], 'actor': [u'Jerry Seinfeld']},
+                   'date': u'1995',
+                   'desc': [(u'In an effort to grow up, George proposes marriage to former girlfriend Susan.',
+                             u'')],
+                   'episode-num': [(u'7 . 1 . 1/1', u'xmltv_ns')],
+                   'language': (u'English', u''),
+                   'last-chance': (u'Hah!', u''),
+                   'length': {'units': u'minutes', 'length': '22'},
                    'new': True,
-                   'orig-language': ('English', ''),
-                   'premiere': ('Not really. Just testing', 'en'),
-                   'previously-shown': {'channel': 'C12whdh.zap2it.com',
-                                        'start': '19950921103000 ADT'},
-                   'rating': [{'icon': [{'height': '64',
-                                         'src': 'http://some.ratings/PGicon.png',
-                                         'width': '64'}],
-                               'system': 'VCHIP',
-                               'value': 'PG'}],
-                   'star-rating': {'icon': [{'height': '32',
-                                             'src': 'http://some.star/icon.png',
-                                             'width': '32'}],
-                                   'value': '4/5'},
-                   'start': '20030702000000 ADT',
-                   'stop': '20030702003000 ADT',
-                   'sub-title': [('The Engagement', '')],
-                   'subtitles': [{'type': 'teletext', 'language': ('English', '')}],
-                   'title': [('Seinfeld', '')],
-                   'url': [('http://www.nbc.com/')],
-                   'video': {'colour': True, 'aspect': '4:3', 'present': True,
+                   'orig-language': (u'English', u''),
+                   'premiere': (u'Not really. Just testing', u'en'),
+                   'previously-shown': {'channel': u'C12whdh.zap2it.com',
+                                        'start': u'19950921103000 ADT'},
+                   'rating': [{'icon': [{'height': u'64',
+                                         'src': u'http://some.ratings/PGicon.png',
+                                         'width': u'64'}],
+                               'system': u'VCHIP',
+                               'value': u'PG'}],
+                   'review': [{'type': 'url', 'value': 'http://some.review/'}],
+                   'star-rating': [{'icon': [{'height': u'32',
+                                             'src': u'http://some.star/icon.png',
+                                             'width': u'32'}],
+                                   'value': u'4/5'}],
+                   'start': u'20030702000000 ADT',
+                   'stop': u'20030702003000 ADT',
+                   'sub-title': [(u'The Engagement', u'')],
+                   'subtitles': [{'type': u'teletext', 'language': (u'English', u'')}],
+                   'title': [(u'Seinfeld', u'')],
+                   'url': [(u'http://www.nbc.com/')],
+                   'video': {'colour': True, 'aspect': u'4:3', 'present': True,
                              'quality': 'standard'}}]
 
-    channels = [{'display-name': [('Channel 10 ELTV', '')],
-                 'id': 'C10eltv.zap2it.com',
-                 'url': ['http://www.eastlink.ca/']},
-                {'display-name': [('Channel 11 CBHT', 'en')],
-                 'icon': [{'src': 'http://tvlistings2.zap2it.com/tms_network_logos/cbc.gif'}],
-                 'id': 'C11cbht.zap2it.com'}]
+    channels = [{'display-name': [(u'Channel 10 ELTV', u'')],
+                 'id': u'C10eltv.zap2it.com',
+                 'url': [u'http://www.eastlink.ca/']},
+                {'display-name': [(u'Channel 11 CBHT', u'en')],
+                 'icon': [{'src': u'http://tvlistings2.zap2it.com/tms_network_logos/cbc.gif'}],
+                 'id': u'C11cbht.zap2it.com'}]
 
 
     w = Writer(encoding="us-ascii",

@@ -15,6 +15,9 @@ listing.  This 'lang' should be the two-letter code such as 'en' or
 'fr_FR'.  Or you can just leave it out and let your reader take a
 guess.
 
+Unless otherwise specified, an element containing CDATA must have some
+text if it is written.
+
 An example XML file for this DTD might look like this:
 
 <tv generator-info-name="my listings generator">
@@ -78,7 +81,7 @@ package, which is a set of programs to generate and manipulate files
 conforming to this DTD.  Written by Ed Avis (ed@membled.com) and
 Gottfried Szing, thanks to others for suggestions.
 
-$Id: xmltv.dtd,v 1.27 2003/08/09 22:40:35 epaepa Exp $
+$Id: xmltv.dtd,v 1.44 2010/04/10 13:11:06 knowledgejunkie Exp $
 
 -->
 
@@ -163,8 +166,7 @@ elements sorted by ASCII order of their ids.
 
 <!-- A user-friendly name for the channel - maybe even a channel
 number.  List the most canonical / common ones first and the most
-obscure names last.  The lang attribute corresponds to abbreviations
-mentioned in ISO 3316.
+obscure names last.  The lang attribute follows RFC 1766.
 -->
 <!ELEMENT display-name (#PCDATA)>
 <!ATTLIST display-name lang CDATA #IMPLIED>
@@ -215,9 +217,9 @@ Perhaps there is some better XML syntax we could use for that.
 -->
 <!ELEMENT programme (title+, sub-title*, desc*, credits?, date?,
                      category*, language?, orig-language?, length?,
-                     icon*, url*, country*, episode-num?, video?, audio?,
+                     icon*, url*, country*, episode-num*, video?, audio?,
                      previously-shown?, premiere?, last-chance?, new?,
-                     subtitles*, rating*, star-rating? )>
+                     subtitles*, rating*, star-rating*, review* )>
 <!ATTLIST programme start     CDATA #REQUIRED
                     stop      CDATA #IMPLIED
                     pdc-start CDATA #IMPLIED
@@ -260,12 +262,16 @@ should be separate, but if so how would 'translator' fit in with the
 'language' element?
 -->
 <!ELEMENT credits (director*, actor*, writer*, adapter*, producer*,
-                   presenter*, commentator*, guest* )>
+                   composer*, editor*, presenter*, commentator*, 
+                   guest* )>
 <!ELEMENT director    (#PCDATA)>
 <!ELEMENT actor       (#PCDATA)>
+<!ATTLIST actor role  CDATA #IMPLIED>
 <!ELEMENT writer      (#PCDATA)>
 <!ELEMENT adapter     (#PCDATA)>
 <!ELEMENT producer    (#PCDATA)>
+<!ELEMENT composer    (#PCDATA)>
+<!ELEMENT editor      (#PCDATA)>
 <!ELEMENT presenter   (#PCDATA)>
 <!ELEMENT commentator (#PCDATA)>
 <!ELEMENT guest       (#PCDATA)>
@@ -405,19 +411,26 @@ meaningless.
 colour: 'yes' for colour, 'no' for black-and-white.
 
 aspect: The horizontal:vertical aspect ratio, eg '4:3' or '16:9'.
+
+quality: information on the quality, eg 'HDTV', '800x600'.
+
 -->
-<!ELEMENT video (present?, colour?, aspect?)>
+<!ELEMENT video (present?, colour?, aspect?, quality?)>
 <!ELEMENT present (#PCDATA)>
 <!ELEMENT colour (#PCDATA)>
 <!ELEMENT aspect (#PCDATA)>
+<!ELEMENT quality (#PCDATA)>
 
 <!-- Audio details, similar to video details above.
 
 present: whether this programme has any sound at all, 'yes' or 'no'.
 
 stereo: Description of the stereo-ness of the sound.  Legal values
-are currently 'mono' and 'stereo' and 'surround'; others like 'quad'
-might be added later.
+are currently 'mono','stereo','dolby','dolby digital','bilingual' 
+and 'surround'. 'bilingual' in this case refers to a single audio 
+stream where the left and right channels contain monophonic audio
+in different languages.  Other values may be added later.
+
 -->
 <!ELEMENT audio (present?, stereo?)>
 <!ELEMENT stereo (#PCDATA)>
@@ -487,13 +500,14 @@ stuff.
 <!ELEMENT new EMPTY>
 
 <!-- Subtitles.  These can be either 'teletext' (sent digitally, and
-displayed at the viewer's request) or 'onscreen' (superimposed on the
-picture and impossible to get rid of).  You can have multiple subtitle
+displayed at the viewer's request), 'onscreen' (superimposed on the
+picture and impossible to get rid of), or 'deaf-signed' (in-vision 
+signing for users of sign language). You can have multiple subtitle
 streams to handle different languages.  Language for subtitles is
 specified in the same way as for programmes.
 -->
 <!ELEMENT subtitles (language?)>
-<!ATTLIST subtitles type (teletext | onscreen) #IMPLIED>
+<!ATTLIST subtitles type (teletext | onscreen | deaf-signed) #IMPLIED>
 
 <!-- Rating.  Various bodies decide on classifications for films -
 usually a minimum age you must be to see it.  In principle the same
@@ -511,13 +525,33 @@ a quick guide to how good it is.  The value of this element should be
 'unrated').  You should try to map whatever wacky system your listings
 source uses to a number of stars: so for example if they have thumbs
 up, thumbs sideways and thumbs down, you could map that to two, one or
-zero stars out of two.  Whitespace between the numbers and slash is
-ignored.
+zero stars out of two.  If a programme is marked as recommended in a
+listings guide you could map this to '1 / 1'. Because there could be many 
+ways to provide star-ratings or recommendations for a programme, you can 
+specify multiple star-ratings. You can specify the star-rating system 
+used, or the provider of the recommendation, with the system attribute. 
+Whitespace between the numbers and slash is ignored.
 -->
+
 <!ELEMENT star-rating (value, icon*)>
+<!ATTLIST star-rating system CDATA #IMPLIED>
+
+<!-- Review.  Listings guides may provide reviews of programmes in
+addition to, or in place of, standard programme descriptions. They are 
+usually written by in-house reviewers, but reviews can also be made 
+available by third-party organisations/individuals. The value of this 
+element must be either the text of the review, or a URL that links to it.
+Optional attributes giving the review source and the individual reviewer 
+can also be specified.
+-->
+<!ELEMENT review (#PCDATA)>
+<!ATTLIST review type     (text | url) #REQUIRED
+                 source   CDATA        #IMPLIED
+                 reviewer CDATA        #IMPLIED>
 
 <!-- (Why are things like 'stereo', which must be one of a small
 number of values, stored as the contents of elements rather than as
 attributes?  Because they are data rather than metadata.  Attributes
 are used for things like the language or encoding of element contents,
 or for programme transmission details.) -->
+
