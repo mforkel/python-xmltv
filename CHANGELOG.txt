@@ -1,0 +1,7 @@
+Changelog
+=========
+
+Version 1.4
+-----------
+* Updated to reflect current XMLTV DTD (patch from Igor Sobolev)
+* Clean up for pypi release

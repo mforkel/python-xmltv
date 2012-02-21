@@ -1,0 +1,6 @@
+2.0
+---
+
+* Programmes and channels should be objects and not dicts. It currently works
+  the way it does to emulate the original Perl interface, but it has since
+  diverged in some ways, and a Pythonic API would be much better
