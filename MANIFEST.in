@@ -1,10 +1,12 @@
+include CHANGELOG.txt
 include COPYING
 include CREDITS
-include MANIFEST 
-include MANIFEST.in 
+include MANIFEST
+include MANIFEST.in
 include README.txt
-include README.html
+include TODO.txt
 include setup.py
 include xmltv.py
+include xmltv.dtd
 global-exclude CVS
 global-exclude .svn

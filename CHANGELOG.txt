@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Version 1.4.1
+-------------
+* Updated MANIFEST.in to include all doc files
+
 Version 1.4
 -----------
 * Updated to reflect current XMLTV DTD (patch from Igor Sobolev)

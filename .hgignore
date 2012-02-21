@@ -4,4 +4,6 @@ syntax: glob
 *.e4p
 *.pyc
 *.swp
+MANIFEST
+dist
 
