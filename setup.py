@@ -6,7 +6,7 @@ setup(
     description="A Python Module for Reading and Writing XMLTV Files",
     version="1.4",
     author="James Oakley",
-    email="jfunk@funktronics.ca",
+    author_email="jfunk@funktronics.ca",
     url= "http://bitbucket.org/jfunk/python-xmltv",
     py_modules=['xmltv'],
     long_description=open('README.txt').read() + '\n\n' +
