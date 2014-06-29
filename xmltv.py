@@ -286,14 +286,14 @@ class Writer:
     **All strings passed to this class must be Unicode, except for dictionary
     keys**
     """
-    def __init__(self, encoding="utf-8", date=None,
+    def __init__(self, encoding="UTF-8", date=None,
                  source_info_url=None, source_info_name=None,
                  generator_info_url=None, generator_info_name=None):
         """
         Arguments:
 
           'encoding' -- The text encoding that will be used.
-                        *Defaults to 'utf-8'*
+                        *Defaults to 'UTF-8'*
 
           'date' -- The date this data was generated. *Optional*
 
@@ -329,7 +329,7 @@ class Writer:
 
         Set 'attr' in 'node' to 'value'
         """
-        node.set(attr, value.encode(self.encoding))
+        node.set(attr, value)
 
     def settext(self, node, text, with_lang=True):
         """
@@ -341,14 +341,14 @@ class Writer:
             if text[0] == None:
                 node.text = None
             else:
-                node.text = text[0].encode(self.encoding)
+                node.text = text[0]
             if text[1]:
-                node.set('lang', text[1].encode(self.encoding))
+                node.set('lang', text[1])
         else:
             if text == None:
                 node.text = None
             else:
-                node.text = text.encode(self.encoding)
+                node.text = text
 
     def seticons(self, node, icons):
         """
@@ -584,7 +584,7 @@ class Writer:
         Write XML to filename of file object in 'file'
         """
         et = ElementTree(self.root)
-        et.write(file)
+        et.write(file, self.encoding, xml_declaration=True)
 
 if __name__ == '__main__':
 # Tests
