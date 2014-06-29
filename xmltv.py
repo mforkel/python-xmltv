@@ -29,7 +29,7 @@ else:
         from elementtree.ElementTree import ElementTree, Element, SubElement, tostring
 
 # The Python-XMLTV version
-VERSION = "1.4"
+VERSION = "1.4.2"
 
 # The date format used in XMLTV (the %Z will go away in 0.6)
 date_format = '%Y%m%d%H%M%S %Z'

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+Version 1.4.2
+-------------
+* Text encoding fixes. (Patch from Jan Sušnik)
+
 Version 1.4.1
 -------------
 * Updated MANIFEST.in to include all doc files
