@@ -29,7 +29,7 @@ else:
         from elementtree.ElementTree import ElementTree, Element, SubElement, tostring
 
 # The Python-XMLTV version
-VERSION = "1.4.2"
+VERSION = "1.4.3"
 
 # The date format used in XMLTV (the %Z will go away in 0.6)
 date_format = '%Y%m%d%H%M%S %Z'
@@ -277,6 +277,24 @@ def read_data(fp=None, tree=None):
                         'generator-info-url'))
     return d
 
+
+def indent(elem, level=0):
+    """
+    Indent XML for pretty printing
+    """
+    i = "\n" + level*"  "
+    if len(elem):
+        if not elem.text or not elem.text.strip():
+            elem.text = i + "  "
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+        for elem in elem:
+            indent(elem, level+1)
+        if not elem.tail or not elem.tail.strip():
+            elem.tail = i
+    else:
+        if level and (not elem.tail or not elem.tail.strip()):
+            elem.tail = i
 
 
 class Writer:
@@ -577,12 +595,15 @@ class Writer:
                 u = SubElement(c, 'url')
                 self.settext(u, url, with_lang=False)
 
-    def write(self, file):
+    def write(self, file, pretty_print=False):
         """
-        write(file) -> None
+        write(file, pretty_print=False) -> None
 
-        Write XML to filename of file object in 'file'
+        Write XML to filename of file object in 'file'. If pretty_print is
+        True, the XML will contain whitespace to make it human-readable.
         """
+        if pretty_print:
+            indent(self.root)
         et = ElementTree(self.root)
         et.write(file, self.encoding, xml_declaration=True)
 
@@ -728,4 +749,4 @@ if __name__ == '__main__':
         w.addChannel(c)
     for p in programmes:
         w.addProgramme(p)
-    w.write(sys.stdout)
+    w.write(sys.stdout, pretty_print=True)

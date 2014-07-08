@@ -1,6 +1,9 @@
 Changelog
 =========
 
+Version 1.4.3
+* Add pretty_print option to Writer.write()
+
 Version 1.4.2
 -------------
 * Text encoding fixes. (Patch from Jan Sušnik)
