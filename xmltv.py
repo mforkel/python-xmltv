@@ -36,35 +36,35 @@ date_format = '%Y%m%d%H%M%S %Z'
 date_format_notz = '%Y%m%d%H%M%S'
 
 
-def set_attrs(dict, elem, attrs):
+def set_attrs(dict_, elem, attrs):
     """
-    set_attrs(dict, elem, attrs) -> None
+    set_attrs(dict_, elem, attrs) -> None
 
-    Add any attributes in 'attrs' found in 'elem' to 'dict'
+    Add any attributes in 'attrs' found in 'elem' to 'dict_'
     """
     for attr in attrs:
         if attr in elem.keys():
-            dict[attr] = elem.get(attr)
+            dict_[attr] = elem.get(attr)
 
-def set_boolean(dict, name, elem):
+def set_boolean(dict_, name, elem):
     """
-    set_boolean(dict, name, elem) -> None
+    set_boolean(dict_, name, elem) -> None
 
-    If element, 'name' is found in 'elem', set 'dict'['name'] to a boolean
+    If element, 'name' is found in 'elem', set 'dict_'['name'] to a boolean
     from the 'yes' or 'no' content of the node
     """
     node = elem.find(name)
     if node is not None:
         if node.text.lower() == 'yes':
-            dict[name] = True
+            dict_[name] = True
         elif node.text.lower() == 'no':
-            dict[name] = False
+            dict_[name] = False
 
 def append_text(dict_, name, elem, with_lang=True):
     """
-    append_text(dict, name, elem, with_lang=True) -> None
+    append_text(dict_, name, elem, with_lang=True) -> None
 
-    Append any text nodes with 'name' found in 'elem' to 'dict'['name']. If
+    Append any text nodes with 'name' found in 'elem' to 'dict_'['name']. If
     'with_lang' is 'True', a tuple of ('text', 'lang') is appended
     """
     for node in elem.findall(name):
@@ -75,25 +75,25 @@ def append_text(dict_, name, elem, with_lang=True):
         else:
             dict_[name].append(node.text)
 
-def set_text(dict, name, elem, with_lang=True):
+def set_text(dict_, name, elem, with_lang=True):
     """
-    set_text(dict, name, elem, with_lang=True) -> None
+    set_text(dict_, name, elem, with_lang=True) -> None
 
-    Set 'dict'['name'] to the text found in 'name', if found under 'elem'. If
+    Set 'dict_'['name'] to the text found in 'name', if found under 'elem'. If
     'with_lang' is 'True', a tuple of ('text', 'lang') is set
     """
     node = elem.find(name)
     if node is not None:
         if with_lang:
-            dict[name] = (node.text, node.get('lang', ''))
+            dict_[name] = (node.text, node.get('lang', ''))
         else:
-            dict[name] = node.text
+            dict_[name] = node.text
 
 def append_icons(dict_, elem):
     """
-    append_icons(dict, elem) -> None
+    append_icons(dict_, elem) -> None
 
-    Append any icons found under 'elem' to 'dict'
+    Append any icons found under 'elem' to 'dict_'
     """
     for iconnode in elem.findall('icon'):
         if 'icon' not in dict_.keys():
@@ -105,7 +105,7 @@ def append_icons(dict_, elem):
 
 def elem_to_channel(elem):
     """
-    elem_to_channel(Element) -> dict
+    elem_to_channel(Element) -> dict_
 
     Convert channel element to dictionary
     """
@@ -133,7 +133,7 @@ def read_channels(fp=None, tree=None):
 
 def elem_to_programme(elem):
     """
-    elem_to_programme(Element) -> dict
+    elem_to_programme(Element) -> dict_
 
     Convert programme element to dictionary
     """
@@ -262,7 +262,7 @@ def read_programmes(fp=None, tree=None):
 
 def read_data(fp=None, tree=None):
     """
-    read_data(fp=None, tree=None) -> dict
+    read_data(fp=None, tree=None) -> dict_
 
     Get the source and other info from file object fp or the ElementTree
     'tree'
@@ -413,7 +413,7 @@ class Writer:
 
         Arguments:
 
-          'programme' -- A dict representing XMLTV data
+          'programme' -- A dict_ representing XMLTV data
         """
         p = SubElement(self.root, 'programme')
 
@@ -575,7 +575,7 @@ class Writer:
 
         Arguments:
 
-          'channel' -- A dict representing XMLTV data
+          'channel' -- A dict_ representing XMLTV data
         """
         c = SubElement(self.root, 'channel')
         self.setattr(c, 'id', channel['id'])
