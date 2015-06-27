@@ -105,7 +105,7 @@ def append_icons(d, elem):
 
 def elem_to_channel(elem):
     """
-    elem_to_channel(Element) -> d
+    elem_to_channel(Element) -> dict
 
     Convert channel element to dictionary
     """
@@ -133,7 +133,7 @@ def read_channels(fp=None, tree=None):
 
 def elem_to_programme(elem):
     """
-    elem_to_programme(Element) -> d
+    elem_to_programme(Element) -> dict
 
     Convert programme element to dictionary
     """
@@ -262,7 +262,7 @@ def read_programmes(fp=None, tree=None):
 
 def read_data(fp=None, tree=None):
     """
-    read_data(fp=None, tree=None) -> d
+    read_data(fp=None, tree=None) -> dict
 
     Get the source and other info from file object fp or the ElementTree
     'tree'
@@ -413,7 +413,7 @@ class Writer:
 
         Arguments:
 
-          'programme' -- A d representing XMLTV data
+          'programme' -- A dict representing XMLTV data
         """
         p = SubElement(self.root, 'programme')
 
@@ -575,7 +575,7 @@ class Writer:
 
         Arguments:
 
-          'channel' -- A d representing XMLTV data
+          'channel' -- A dict representing XMLTV data
         """
         c = SubElement(self.root, 'channel')
         self.setattr(c, 'id', channel['id'])
