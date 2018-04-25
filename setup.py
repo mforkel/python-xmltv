@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 from distutils.core import setup
 
+from xmltv import VERSION
+
 setup(
     name="python-xmltv",
     description="A Python Module for Reading and Writing XMLTV Files",
-    version="1.4.3",
+    version=VERSION,
     author="James Oakley",
     author_email="jfunk@funktronics.ca",
     url= "http://bitbucket.org/jfunk/python-xmltv",
