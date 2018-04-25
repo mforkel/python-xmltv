@@ -81,7 +81,7 @@ package, which is a set of programs to generate and manipulate files
 conforming to this DTD.  Written by Ed Avis (ed@membled.com) and
 Gottfried Szing, thanks to others for suggestions.
 
-$Id: xmltv.dtd,v 1.44 2010/04/10 13:11:06 knowledgejunkie Exp $
+$Id: xmltv.dtd,v 1.47 2014/05/02 07:27:51 bilbo_uk Exp $
 
 -->
 
@@ -216,10 +216,11 @@ element, but the DTD doesn't give a way to specify this constraint.
 Perhaps there is some better XML syntax we could use for that.
 -->
 <!ELEMENT programme (title+, sub-title*, desc*, credits?, date?,
-                     category*, language?, orig-language?, length?,
-                     icon*, url*, country*, episode-num*, video?, audio?,
-                     previously-shown?, premiere?, last-chance?, new?,
-                     subtitles*, rating*, star-rating*, review* )>
+                     category*, keyword*, language?, orig-language?,
+                     length?, icon*, url*, country*, episode-num*,
+                     video?, audio?, previously-shown?, premiere?,
+                     last-chance?, new?, subtitles*, rating*,
+                     star-rating*, review* )>
 <!ATTLIST programme start     CDATA #REQUIRED
                     stop      CDATA #IMPLIED
                     pdc-start CDATA #IMPLIED
@@ -288,6 +289,14 @@ categories and it's okay for a programme to belong to several.
 -->
 <!ELEMENT category (#PCDATA)>
 <!ATTLIST category lang CDATA #IMPLIED>
+
+<!-- Keywords for the programme, eg 'prison-drama', 'based-on-novel', 
+'super-hero'.  There's no predefined set of keywords and it's likely 
+for a programme to have several.  It is recommended that keywords
+containing multiple words are hyphenated.
+-->
+<!ELEMENT keyword (#PCDATA)>
+<!ATTLIST keyword lang CDATA #IMPLIED>
 
 <!-- The language the programme will be broadcast in.  This does not
 include the language of any subtitles, but it is affected by dubbing
@@ -396,6 +405,15 @@ You are encouraged to use one of these two if possible; if xmltv_ns is
 not general enough for your needs, let me know.  But if you want, you
 can use your own system and give the 'system' attribute as a URL
 describing the system you use.
+
+Systems proposed in 2013 to refer to common metadatabases in a
+common way:
+'themoviedb.org' with the content 'movie/1234' to refer to a movie,
+'thetvdb.com' with the content 'series/123456' to refer to a series,
+'thetvdb.com' with the content 'episode/123456' to refer to one episode
+of a series and 'imdb.com' with the content 'title/tt123455' to refer to
+a movie, series or episode.
+
 -->
 <!ELEMENT episode-num (#PCDATA)>
 <!ATTLIST episode-num system CDATA "onscreen">
@@ -547,11 +565,11 @@ can also be specified.
 <!ELEMENT review (#PCDATA)>
 <!ATTLIST review type     (text | url) #REQUIRED
                  source   CDATA        #IMPLIED
-                 reviewer CDATA        #IMPLIED>
+                 reviewer CDATA        #IMPLIED
+                 lang     CDATA        #IMPLIED>
 
 <!-- (Why are things like 'stereo', which must be one of a small
 number of values, stored as the contents of elements rather than as
 attributes?  Because they are data rather than metadata.  Attributes
 are used for things like the language or encoding of element contents,
 or for programme transmission details.) -->
-
