@@ -6,7 +6,7 @@ Introduction
 python-xmltv is a Python module that provides access to XMLTV data. XMLTV is
 an XML format for storing TV listings.
 
-More information on XMLTV can be found at http://membled.com/work/apps/xmltv/
+More information on XMLTV can be found at http://wiki.xmltv.org.
 
 
 Requirements
