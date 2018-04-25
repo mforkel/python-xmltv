@@ -315,26 +315,26 @@ class Writer:
 
           'date' -- The date this data was generated. *Optional*
 
-          'source_info_url' -- A URL for information about the source of the
+          'source-info-url' -- A URL for information about the source of the
                                data. *Optional*
 
-          'source_info_name' -- A human readable description of
-                                'source_info_url'. *Optional*
+          'source-info-name' -- A human readable description of
+                                'source-info-url'. *Optional*
 
-          'generator_info_url' -- A URL for information about the program
+          'generator-info-url' -- A URL for information about the program
                                   that is generating the XMLTV document.
                                   *Optional*
 
-          'generator_info_name' -- A human readable description of
-                                   'generator_info_url'. *Optional*
+          'generator-info-name' -- A human readable description of
+                                   'generator-info-url'. *Optional*
 
         """
         self.encoding = encoding
         self.data = {'date': date,
-                     'source_info_url': source_info_url,
-                     'source_info_name': source_info_name,
-                     'generator_info_url': generator_info_url,
-                     'generator_info_name': generator_info_name}
+                     'source-info-url': source_info_url,
+                     'source-info-name': source_info_name,
+                     'generator-info-url': generator_info_url,
+                     'generator-info-name': generator_info_name}
 
         self.root = Element('tv')
         for attr in self.data.keys():
